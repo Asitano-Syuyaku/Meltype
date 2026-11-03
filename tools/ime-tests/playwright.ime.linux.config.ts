@@ -14,7 +14,7 @@ export default defineConfig({
     name: 'real-ime-linux', testMatch: '**/ime/**/*.spec.ts',
     use: {
       browserName: 'chromium', headless: false, baseURL: 'http://127.0.0.1:4173',
-      launchOptions: { args: ['--ozone-platform=x11', '--gtk-version=3'] },
+      launchOptions: { chromiumSandbox: true, args: ['--ozone-platform=x11', '--gtk-version=3'] },
       trace: 'retain-on-failure', screenshot: 'only-on-failure',
     },
   }],

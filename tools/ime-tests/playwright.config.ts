@@ -19,7 +19,10 @@ export default defineConfig({
     { name: 'unit', testMatch: '**/unit/**/*.spec.ts' },
     { name: 'page', testMatch: '**/page/**/*.spec.ts', use: { browserName: 'chromium' } },
   ],
-  use: { baseURL: 'http://127.0.0.1:4173', trace: 'retain-on-failure', screenshot: 'only-on-failure' },
+  use: {
+    baseURL: 'http://127.0.0.1:4173', trace: 'retain-on-failure', screenshot: 'only-on-failure',
+    launchOptions: { chromiumSandbox: true },
+  },
   webServer: {
     command: 'npm run dev',
     url: 'http://127.0.0.1:4173',
