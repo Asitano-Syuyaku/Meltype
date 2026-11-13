@@ -158,8 +158,7 @@ internal sealed class CompositionWindow : PopupForm
         if (_above is { } a) location.Y = a.Bottom - size.Height >= screen.Top ? a.Bottom - size.Height : a.BelowY;
         if (location.X + size.Width > screen.Right) location.X = Math.Max(screen.Left, screen.Right - size.Width);
         if (location.Y + size.Height > screen.Bottom) location.Y = overlay ? Math.Max(screen.Top, screen.Bottom - size.Height) : Math.Max(screen.Top, location.Y - size.Height - 28);
-        SetBounds(location.X, location.Y, size.Width, size.Height);
-        if (!Visible) Show();
+        ShowAt(new Rectangle(location, size));
         Invalidate();
         UpdateMeaning(view);
     }
@@ -206,10 +205,9 @@ internal sealed class CompositionWindow : PopupForm
         _meaningPopup ??= new MeaningPopup(_palette, Opacity);
         _meaningPopup.SetText(meaning, _candidateFont);
         PlaceMeaning(view);
-        if (!_meaningPopup.Visible) _meaningPopup.Show();
     }
 
-    /// <summary>意味の枠を、変換ボックスの右 (はみ出すなら左) の、選んでいる候補の行の高さに置く。</summary>
+    /// <summary>意味の枠を、変換ボックスの右 (はみ出すなら左) の、選んでいる候補の行の高さに出す。</summary>
     private void PlaceMeaning(CompositionView view)
     {
         if (_meaningPopup is null) return;
@@ -220,7 +218,7 @@ internal sealed class CompositionWindow : PopupForm
         var x = Right + 4;
         if (x + size.Width > screen.Right) x = Math.Max(screen.Left, Left - size.Width - 4);
         y = Math.Clamp(y, screen.Top, Math.Max(screen.Top, screen.Bottom - size.Height));
-        _meaningPopup.Location = new Point(x, y);
+        _meaningPopup.ShowAt(new Rectangle(new Point(x, y), size));
     }
 
     protected override void OnVisibleChanged(EventArgs e)

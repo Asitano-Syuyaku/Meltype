@@ -18,6 +18,23 @@ internal abstract class PopupForm : Form
         DoubleBuffered = true;
     }
 
+    /// <summary>bounds に出し、最前面のウィンドウの中でいちばん手前に置き直す。出すときも、出したまま中身を変えるときも、これで出す。</summary>
+    public void ShowAt(Rectangle bounds)
+    {
+        SetBounds(bounds.X, bounds.Y, bounds.Width, bounds.Height);
+        if (!Visible) Show();
+        // WS_EX_TOPMOST は作ったときに一度付くだけで、重なり順は後から動く。印が付いたまま普通のウィンドウより下に落ちると、
+        // 出しても入力欄のウィンドウの裏に隠れ、作り直す (Meltype を起動し直す) まで見えなかった。
+        // TIP の候補ウィンドウ (native/tip/CandidateWindow.cpp) と同じく、出すたびに置き直して、それまでの重なり順に頼らない。
+        SetWindowPos(Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+    }
+
+    private static readonly IntPtr HWND_TOPMOST = new(-1);
+    private const uint SWP_NOSIZE = 0x0001, SWP_NOMOVE = 0x0002, SWP_NOACTIVATE = 0x0010;
+
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    private static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy, uint flags);
+
     /// <summary>クリックを下のウィンドウへ通すか。</summary>
     protected virtual bool ClickThrough => false;
 
